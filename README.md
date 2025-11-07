@@ -5,7 +5,7 @@ using highly managed, scalable services, including
 
 * Elastic Container Service for the web application
 * EC2 instances for celery worker nodes
-* DocumentDB as the mongo-compatible database
+* MongoDB Atlas for the database
 * Amazon MQ as the celery queue
 * CloudWatch for log persistence
 * Sentry integration (optional)
