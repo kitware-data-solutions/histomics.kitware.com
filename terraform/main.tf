@@ -175,14 +175,14 @@ resource "aws_acm_certificate" "front_cert" {
   }
 }
 
-data "aws_route53_zone" "primary" {
+resource "aws_route53_zone" "primary" {
   name = var.domain_name
 }
 
 resource "aws_route53_record" "cert_validation" {
   name    = tolist(aws_acm_certificate.front_cert.domain_validation_options).0.resource_record_name
   type    = tolist(aws_acm_certificate.front_cert.domain_validation_options).0.resource_record_type
-  zone_id = data.aws_route53_zone.primary.zone_id
+  zone_id = aws_route53_zone.primary.zone_id
   records = [tolist(aws_acm_certificate.front_cert.domain_validation_options).0.resource_record_value]
   ttl     = 60
 }
@@ -190,7 +190,7 @@ resource "aws_route53_record" "cert_validation" {
 resource "aws_route53_record" "front_lb" {
   name    = var.domain_name
   type    = "A"
-  zone_id = data.aws_route53_zone.primary.zone_id
+  zone_id = aws_route53_zone.primary.zone_id
 
   alias {
     name                   = aws_lb.ecs_lb.dns_name
