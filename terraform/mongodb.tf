@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     mongodbatlas = {
-      source  = "mongodb/mongodbatlas"
+      source = "mongodb/mongodbatlas"
     }
   }
 }
@@ -28,25 +28,26 @@ resource "mongodbatlas_project" "histomics_project" {
   name   = var.mongodbatlas_project_name
 }
 
-resource "mongodbatlas_cluster" "histomics_cluster" {
-  provider_name = "AWS"
-  project_id    = mongodbatlas_project.histomics_project.id
-  name          = "histomics-cluster"
-  cluster_type  = "REPLICASET"
-  replication_specs {
-    num_shards = 1
-    regions_config {
-      region_name     = "US_EAST_1"
-      electable_nodes = 3
-      priority        = 7
-      read_only_nodes = 0
-    }
-  }
-  backing_provider_name = "AWS"
+resource "mongodbatlas_advanced_cluster" "histomics_cluster" {
+  project_id   = mongodbatlas_project.histomics_project.id
+  name         = "histomics-cluster"
+  cluster_type = "REPLICASET"
 
-  provider_instance_size_name = var.mongodbatlas_instance_size_name
-  cloud_backup                = true
-  mongo_db_major_version      = "7.0"
+  replication_specs = [{
+    num_shards = 1
+    region_configs = [{
+      region_name   = "US_EAST_1"
+      provider_name = "AWS"
+      priority      = 7
+      electable_specs = {
+        instance_size = var.mongodbatlas_instance_size_name
+        node_count    = 3
+      }
+    }]
+  }]
+
+  backup_enabled         = true
+  mongo_db_major_version = "7.0"
 }
 
 resource "random_password" "mongodb_atlas_password" {
@@ -75,6 +76,6 @@ locals {
     "mongodb+srv://%s:%s@%s",
     mongodbatlas_database_user.histomics_user.username,
     urlencode(mongodbatlas_database_user.histomics_user.password),
-    replace(mongodbatlas_cluster.histomics_cluster.connection_strings.0.standard_srv, "mongodb+srv://", "")
+    replace(mongodbatlas_advanced_cluster.histomics_cluster.connection_strings.standard_srv, "mongodb+srv://", "")
   )
 }
