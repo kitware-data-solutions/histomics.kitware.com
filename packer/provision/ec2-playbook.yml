@@ -18,6 +18,8 @@
         - libssl-dev
         - build-essential
         - pkg-config
+        - cmake
+        - golang
     - name: Install Rust
       shell: |
         curl -sSf https://sh.rustup.rs | sh -s -- -y
