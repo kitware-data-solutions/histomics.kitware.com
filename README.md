@@ -1,3 +1,6 @@
+> This is the instance of the Histomics AWS deployment terraform associated with **histomics.kitware.com**.
+> Its state is managed on Kitware's Terraform Cloud organization.
+
 # Histomics AWS deployment scripts
 
 This repository contains infrastructure-as-code for reproducible Histomics deployments on AWS
