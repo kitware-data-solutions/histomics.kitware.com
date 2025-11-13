@@ -1,3 +1,13 @@
+terraform {
+  cloud {
+    organization = "kitware"
+
+    workspaces {
+      name = "histomics-demo"
+    }
+  }
+}
+
 provider "aws" {
   region = "us-east-1"
 }
