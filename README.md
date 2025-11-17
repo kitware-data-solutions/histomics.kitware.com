@@ -35,4 +35,20 @@ using highly managed, scalable services, including
 1. `DOCKER_DEFAULT_PLATFORM=linux/amd64 docker build -t zachmullen/histomics-load-test -f histomicsui.Dockerfile .`
 1. `docker push zachmullen/histomics-load-test`
 1. Copy the SHA from the docker push command and paste it into `main.tf`
-1. From the terraform directory, run `terraform apply -var-file=.tfvars`
+1. Push and merge the resulting change, and ensure the plan and apply succeeds in TF Cloud.
+
+**Note**: the first time you run the terraform plan on TF Cloud, it will fail with a message like:
+
+```hcl
+count = length(data.aws_subnets.default.ids)
+```
+
+> The "count" value depends on resource attributes that cannot be determined until apply, so Terraform cannot predict how many instances will be created. To work around this, use the -target argument to first apply only the resources that the count depends on.
+
+This is because the length of the set of subnets is unknown until the first apply, which is a limitation of terraform itself. To work around this, the very first time you run the plan, set the following env var in
+TF Cloud:
+
+* Key: `TF_CLI_ARGS_plan`
+* Value: `-target=data.aws_subnets.default`
+
+Run and apply the resulting plan, and then delete that env var in TF Cloud. Subsequent runs should then work.
