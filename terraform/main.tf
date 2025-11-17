@@ -10,6 +10,12 @@ terraform {
 
 provider "aws" {
   region = "us-east-1"
+
+  default_tags {
+    tags = {
+      Deployment = "histomics.kitware.com"
+    }
+  }
 }
 
 data "aws_region" "current" {}
