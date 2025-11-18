@@ -73,7 +73,7 @@ resource "mongodbatlas_project_ip_access_list" "histomics" {
 
 locals {
   mongodb_connection_string = format(
-    "mongodb+srv://%s:%s@%s",
+    "mongodb+srv://%s:%s@%s/girder",
     mongodbatlas_database_user.histomics_user.username,
     urlencode(mongodbatlas_database_user.histomics_user.password),
     replace(mongodbatlas_advanced_cluster.histomics_cluster.connection_strings.standard_srv, "mongodb+srv://", "")
