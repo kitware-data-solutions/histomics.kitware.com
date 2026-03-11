@@ -1,26 +1,10 @@
-terraform {
-  required_providers {
-    mongodbatlas = {
-      source = "mongodb/mongodbatlas"
-    }
-  }
-}
-
-provider "mongodbatlas" {
-}
-
-variable "mongodbatlas_org_id" {
-  type = string
-}
-
-variable "mongodbatlas_project_name" {
-  type    = string
-  default = "histomics"
-}
-
-variable "mongodbatlas_instance_size_name" {
-  type    = string
-  default = "M10"
+locals {
+  mongodb_connection_string = format(
+    "mongodb+srv://%s:%s@%s/girder",
+    mongodbatlas_database_user.histomics_user.username,
+    urlencode(mongodbatlas_database_user.histomics_user.password),
+    replace(mongodbatlas_advanced_cluster.histomics_cluster.connection_strings.standard_srv, "mongodb+srv://", "")
+  )
 }
 
 resource "mongodbatlas_project" "histomics_project" {
@@ -69,13 +53,4 @@ resource "mongodbatlas_database_user" "histomics_user" {
 resource "mongodbatlas_project_ip_access_list" "histomics" {
   project_id = mongodbatlas_project.histomics_project.id
   cidr_block = "0.0.0.0/0" # TODO use public-facing VPC CIDR block
-}
-
-locals {
-  mongodb_connection_string = format(
-    "mongodb+srv://%s:%s@%s/girder",
-    mongodbatlas_database_user.histomics_user.username,
-    urlencode(mongodbatlas_database_user.histomics_user.password),
-    replace(mongodbatlas_advanced_cluster.histomics_cluster.connection_strings.standard_srv, "mongodb+srv://", "")
-  )
 }
