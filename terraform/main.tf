@@ -19,7 +19,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Deployment = "histomics.kitware.com"
+      Project = "histomics-demo"
     }
   }
 }
